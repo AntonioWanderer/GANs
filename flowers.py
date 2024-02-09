@@ -8,8 +8,8 @@ path = "Content/flowers/"
 x_train_l = np.array([cv2.imread(path + name) for name in os.listdir(path)])
 print(x_train_l.shape)
 
-random_dim = 100
-batch_size = 3
+random_dim = 1000
+batch_size = 1
 ims, height, width, dep = x_train_l.shape
 depth = height * width
 
@@ -76,13 +76,14 @@ for i in range(100001):
     gan1.train_on_batch(noise1, res1)  # генератор учится подделывать генерацию
     gan2.train_on_batch(noise2, res1)  # генератор учится подделывать генерацию
     gan3.train_on_batch(noise3, res1)  # генератор учится подделывать генерацию
-    if i % 100 == 0:
-        result1 = generator1.predict(np.expand_dims(noise1[0], axis=0)).reshape(height, width,1)
-        result2 = generator2.predict(np.expand_dims(noise1[0], axis=0)).reshape(height, width,1)
-        result3 = generator3.predict(np.expand_dims(noise1[0], axis=0)).reshape(height, width,1)
-        full = np.concatenate([result1,result2,result3], axis=2)
+    if i%10 == 0:
+        result1 = generator1.predict(np.expand_dims(noise1[0], axis=0)).reshape(height, width, 1)
+        result2 = generator2.predict(np.expand_dims(noise1[0], axis=0)).reshape(height, width, 1)
+        result3 = generator3.predict(np.expand_dims(noise1[0], axis=0)).reshape(height, width, 1)
+        full = np.concatenate([result1, result2, result3], axis=2)
         print(full.shape)
         cv2.imwrite(filename=f"results/flowers_c/result{i}.jpg", img=full * 255)
+    if i % 100 == 0:
         generator1.save(f"models/generatorRed{i}")
         generator2.save(f"models/generatorGreen{i}")
         generator3.save(f"models/generatorBlue{i}")
